@@ -1,9 +1,13 @@
 // load config 
 require('dotenv').config()
+// require body-parser to parse post-requests
+let bodyParser = require('body-parser');
+
 let express = require('express');
 let app = express();
 
-let absolutePath = __dirname + '/views/index.html'
+// handle url encoded data
+app.use(bodyParser.urlencoded({extended: false}));
 
 // logger middleware before all other routes
 app.use('/', (req, res, next) => {
@@ -21,6 +25,7 @@ app.get('/now', (req, res, next) => {
 });
 
 // serve index.html to /
+let absolutePath = __dirname + '/views/index.html'
 app.get('/', (req, res) => {
   res.sendFile(absolutePath);
 });
@@ -28,6 +33,17 @@ app.get('/', (req, res) => {
 // echo server
 app.get('/:word/echo', (req, res) => {
   res.send({echo: req.params.word});
+});
+
+// GET query name server
+app.get('/name', (req, res) => {
+  res.send({name: req.query.first + " " + req.query.last});
+});
+
+// POST query name server
+app.post('/name', (req, res) => {
+  console.log(req.body);
+  res.send({name: req.body.first + " " + req.body.last});
 });
 
 // serve css to /public
